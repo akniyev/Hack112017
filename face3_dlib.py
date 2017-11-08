@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import dlib
+import datetime
 
 # multiple cascades: https://github.com/Itseez/opencv/tree/master/data/haarcascades
 
@@ -22,15 +23,21 @@ def getLandmarks(opencv_img, x, y, w, h) -> dlib.full_object_detection:
 
     return shape
 
+counter = 0
+
 while 1:
+    counter = counter + 1
+
     ret, img = cap.read()
     orig_img = img.copy()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # faces = face_cascade.detectMultiScale(gray, 1.1, 2)
 
     dets = detector(img, 0)
-
+    if counter % 10 != 0:
+        continue
     for k, d in enumerate(dets):
+
         # Get the landmarks/parts for the face in box d.
         shape = predictor(img, d)
         # for i in [30, 8, 36, 45, 48, 54]: #range(36, 48):
@@ -169,6 +176,11 @@ while 1:
         resized_image1 = cv2.cvtColor(cv2.resize(masked_image1, (20, 10)), cv2.COLOR_BGR2GRAY)
         resized_image2 = cv2.cvtColor(cv2.resize(masked_image2, (20, 10)), cv2.COLOR_BGR2GRAY)
 
+        time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S') + str(counter)
+        cv2.imwrite('data/eye_'+time+'.jpg', orig_img)
+        np.savetxt('data/eye1_'+time+'.txt', resized_image1, '%d')
+        #cv2.imwrite('data/eye2_' + time + '.jpg', right_eye_img)
+        np.savetxt('data/eye2_' + time + '.txt', resized_image1, '%d')
 
         cv2.imshow('eye', resized_image1)
         cv2.imshow('eye2', resized_image2)
