@@ -27,12 +27,13 @@ while 1:
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # faces = face_cascade.detectMultiScale(gray, 1.1, 2)
 
-    dets = detector(img, 1)
+    dets = detector(img, 0)
 
     for k, d in enumerate(dets):
         # Get the landmarks/parts for the face in box d.
         shape = predictor(img, d)
-        for i in range(shape.num_parts):
+        for i in range(36, 48):
+        #for i in range(shape.num_parts):
             x = shape.part(i).x
             y = shape.part(i).y
 
