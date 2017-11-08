@@ -22,6 +22,16 @@ def getLandmarks(opencv_img, x, y, w, h) -> dlib.full_object_detection:
 
     return shape
 
+def size_that_fits(w, h, dw, dh):
+    ratio1 = dw / w
+    ratio2 = dh / h
+
+    if ratio1 * h <= dh:
+        return (int(w * ratio1), int(h * ratio1))
+    else:
+        return (int(w * ratio2), int(h * ratio2))
+
+
 while 1:
     ret, img = cap.read()
     orig_img = img.copy()
@@ -163,12 +173,16 @@ while 1:
 
         masked_image2 = cv2.bitwise_and(right_eye_img, mask2)
 
-        resized_image1 = np.zeros((20, 10, 3), dtype=np.uint8)
-        resized_image2 = np.zeros((20, 10, 3), dtype=np.uint8)
 
-        resized_image1 = cv2.cvtColor(cv2.resize(masked_image1, (20, 10)), cv2.COLOR_BGR2GRAY)
-        resized_image2 = cv2.cvtColor(cv2.resize(masked_image2, (20, 10)), cv2.COLOR_BGR2GRAY)
+        # nw1, nh1 = size_that_fits(left_eye_img.shape[1], left_eye_img.shape[0], 40, 20)
+        resized_image1 = np.zeros((40, 20, 3), dtype=np.uint8)
+        resized_image2 = np.zeros((40, 20, 3), dtype=np.uint8)
 
+        resized_image1 = cv2.cvtColor(cv2.resize(masked_image1, (40, 20)), cv2.COLOR_BGR2GRAY)
+        resized_image2 = cv2.cvtColor(cv2.resize(masked_image2, (40, 20)), cv2.COLOR_BGR2GRAY)
+
+        gray_eye1 = cv2.cvtColor(masked_image1, cv2.COLOR_BGR2GRAY)
+        gray_eye2 = cv2.cvtColor(masked_image2, cv2.COLOR_BGR2GRAY)
 
         cv2.imshow('eye', resized_image1)
         cv2.imshow('eye2', resized_image2)
