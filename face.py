@@ -16,6 +16,7 @@ while 1:
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, 1.1, 2)
 
+
     for (x, y, w, h) in faces:
         roi_gray = gray[y:y + h, x:x + w]
         roi_color = img[y:y + h, x:x + w]
@@ -68,7 +69,6 @@ while 1:
                     cv2.circle(img, (x + ex + xc, y + ey + yc), 2, (0, 0, 255), 3)
 
                 img[0:ew, 0:eh] = cv2.cvtColor(eye_contrast, cv2.COLOR_GRAY2BGR)
-
 
 
     cv2.imshow('img', img)
