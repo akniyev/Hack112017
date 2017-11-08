@@ -23,8 +23,20 @@ def getLandmarks(opencv_img, x, y, w, h) -> dlib.full_object_detection:
 
     return shape
 
-counter = 0
 
+
+
+def size_that_fits(w, h, dw, dh):
+    ratio1 = dw / w
+    ratio2 = dh / h
+
+    if ratio1 * h <= dh:
+        return (int(w * ratio1), int(h * ratio1))
+    else:
+        return (int(w * ratio2), int(h * ratio2))
+
+
+counter = 0
 while 1:
     counter = counter + 1
 
@@ -170,17 +182,27 @@ while 1:
 
         masked_image2 = cv2.bitwise_and(right_eye_img, mask2)
 
+
+        # nw1, nh1 = size_that_fits(left_eye_img.shape[1], left_eye_img.shape[0], 40, 20)
         resized_image1 = np.zeros((20, 10, 3), dtype=np.uint8)
         resized_image2 = np.zeros((20, 10, 3), dtype=np.uint8)
 
         resized_image1 = cv2.cvtColor(cv2.resize(masked_image1, (20, 10)), cv2.COLOR_BGR2GRAY)
         resized_image2 = cv2.cvtColor(cv2.resize(masked_image2, (20, 10)), cv2.COLOR_BGR2GRAY)
 
+
         time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S') + str(counter)
-        cv2.imwrite('data/eye_'+time+'.jpg', orig_img)
-        np.savetxt('data/eye1_'+time+'.txt', resized_image1, '%d')
-        #cv2.imwrite('data/eye2_' + time + '.jpg', right_eye_img)
-        np.savetxt('data/eye2_' + time + '.txt', resized_image1, '%d')
+        generate_dataset = True
+        if generate_dataset:
+            cv2.imwrite('data/eye_'+time+'.jpg', orig_img)
+            np.savetxt('data/eye1_'+time+'.txt', resized_image1, '%d')
+            #cv2.imwrite('data/eye2_' + time + '.jpg', right_eye_img)
+            np.savetxt('data/eye2_' + time + '.txt', resized_image1, '%d')
+            np.savetxt('data/nose_' + time + '.txt', [p2[0]-p1[0], p2[1]-p1[1]], '%d')
+
+        #gray_eye1 = cv2.cvtColor(masked_image1, cv2.COLOR_BGR2GRAY)
+        #gray_eye2 = cv2.cvtColor(masked_image2, cv2.COLOR_BGR2GRAY)
+
 
         cv2.imshow('eye', resized_image1)
         cv2.imshow('eye2', resized_image2)
