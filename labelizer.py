@@ -28,9 +28,7 @@ def cbc(obj):
     L.pack()
 
 
-
-target_folder = 'h:/docs/progs/python/Hack112017/data/**/*.jpg'
-
+target_folder = 'data/*.jpg' #'h:/Dropbox/INFO_BASE_EXT/Hack112017/**/*.jpg'
 files = []
 ind = -1
 for f in glob.glob(target_folder, recursive=True):

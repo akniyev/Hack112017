@@ -2,6 +2,11 @@ import numpy as np
 import cv2
 import dlib
 import datetime
+import pickle
+
+with open('saved_model.pickle', 'rb') as handle:
+    classifier = pickle.load(handle)
+print(classifier)
 
 # multiple cascades: https://github.com/Itseez/opencv/tree/master/data/haarcascades
 
@@ -37,11 +42,9 @@ def size_that_fits(w, h, dw, dh):
     else:
         return (int(w * ratio2), int(h * ratio2))
 
-
+generate_dataset = True
 counter = 0
 while 1:
-    counter = counter + 1
-
     ret, img = cap.read()
     orig_img = img.copy()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -56,8 +59,12 @@ while 1:
 
 
     dets = detector(img, 0)
-    if counter % 10 != 0:
-        continue
+
+    if generate_dataset:
+        counter = counter + 1
+        if counter % 10 != 0:
+            continue
+
     for k, d in enumerate(dets):
 
         # Get the landmarks/parts for the face in box d.
@@ -202,13 +209,15 @@ while 1:
 
 
         time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S') + str(counter)
-        generate_dataset = True
+
+        nose_vector = [p2[0] - p1[0], p2[1] - p1[1]]
+
         if generate_dataset:
             cv2.imwrite('data/'+time+'.jpg', orig_img)
             np.savetxt('data/'+time+'_eye1.txt', resized_image1, '%d')
             #cv2.imwrite('data/eye2_' + time + '.jpg', right_eye_img)
             np.savetxt('data/' + time + '_eye2.txt', resized_image2, '%d')
-            np.savetxt('data/' + time + '_nose.txt', [p2[0]-p1[0], p2[1]-p1[1]], '%d')
+            np.savetxt('data/' + time + '_nose.txt', nose_vector, '%d')
 
         #gray_eye1 = cv2.cvtColor(masked_image1, cv2.COLOR_BGR2GRAY)
         #gray_eye2 = cv2.cvtColor(masked_image2, cv2.COLOR_BGR2GRAY)
@@ -217,6 +226,14 @@ while 1:
         cv2.imshow('eye', resized_image1)
         cv2.imshow('eye2', resized_image2)
 
+        data = dlib.vector(np.concatenate((resized_image1.flatten(), resized_image2.flatten(), nose_vector)).tolist())
+        np.savetxt('r.txt', data)
+
+        c = classifier(data)
+
+        if c < 0:
+            cv2.rectangle(img, (5, 5), (100, 100), (0, 0, 255), 5)
+        print(c)
 
     cv2.imshow('img', img)
     k = cv2.waitKey(30) & 0xff
