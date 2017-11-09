@@ -37,11 +37,9 @@ def size_that_fits(w, h, dw, dh):
     else:
         return (int(w * ratio2), int(h * ratio2))
 
-
+generate_dataset = True
 counter = 0
 while 1:
-    counter = counter + 1
-
     ret, img = cap.read()
     orig_img = img.copy()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -56,8 +54,12 @@ while 1:
 
 
     dets = detector(img, 0)
-    if counter % 10 != 0:
-        continue
+
+    if generate_dataset:
+        counter = counter + 1
+        if counter % 10 != 0:
+            continue
+
     for k, d in enumerate(dets):
 
         # Get the landmarks/parts for the face in box d.
@@ -202,7 +204,7 @@ while 1:
 
 
         time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S') + str(counter)
-        generate_dataset = True
+
         if generate_dataset:
             cv2.imwrite('data/'+time+'.jpg', orig_img)
             np.savetxt('data/'+time+'_eye1.txt', resized_image1, '%d')
