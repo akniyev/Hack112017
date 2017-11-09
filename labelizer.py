@@ -29,7 +29,8 @@ def cbc(obj):
 
 
 
-target_folder = 'h:/Dropbox/INFO_BASE_EXT/Hack112017/**/*.jpg'
+target_folder = 'h:/docs/progs/python/Hack112017/data/**/*.jpg'
+
 files = []
 ind = -1
 for f in glob.glob(target_folder, recursive=True):
