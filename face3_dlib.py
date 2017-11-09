@@ -17,7 +17,7 @@ eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 #https://github.com/opencv/opencv/blob/master/data/haarcascades/haarcascade_smile.xml
 smile_cascade = cv2.CascadeClassifier('haarcascade_smile.xml')
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 detector = dlib.get_frontal_face_detector()
 predictor_path = "shape_predictor_68_face_landmarks.dat"
@@ -207,9 +207,12 @@ while 1:
         if resized_image1.shape[0] * resized_image1.shape[1] * resized_image2.shape[0] * resized_image2.shape[1] <= 0:
             continue
 
-        resized_image1 = cv2.cvtColor(cv2.resize(masked_image1, (20, 10)), cv2.COLOR_BGR2GRAY)
-        resized_image2 = cv2.cvtColor(cv2.resize(masked_image2, (20, 10)), cv2.COLOR_BGR2GRAY)
-
+        try:
+            resized_image1 = cv2.cvtColor(cv2.resize(masked_image1, (20, 10)), cv2.COLOR_BGR2GRAY)
+            resized_image2 = cv2.cvtColor(cv2.resize(masked_image2, (20, 10)), cv2.COLOR_BGR2GRAY)
+        except:
+            print("Error")
+            continue
 
         time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S') + str(counter)
 
