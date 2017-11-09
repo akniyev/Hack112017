@@ -76,6 +76,23 @@ while 1:
         #
         #     cv2.circle(img, (x, y), 2, (0, 0, 255), 3)
 
+        def draw_facial_feature(point_ids):
+            for i in range(len(point_ids) - 1):
+                p1 = shape.part(point_ids[i])
+                p2 = shape.part(point_ids[i+1])
+                cv2.line(img, (p1.x, p1.y), (p2.x, p2.y), (0, 255, 0), 2)
+
+        draw_facial_feature([17, 18, 19, 20, 21])
+        draw_facial_feature([22, 23, 24, 25, 26])
+        draw_facial_feature([27, 28, 29, 30])
+        draw_facial_feature(range(1,17))
+        draw_facial_feature([36, 37, 38, 39, 40, 41, 36])
+        draw_facial_feature([42, 43, 44, 45, 46, 47, 42])
+        draw_facial_feature([42, 43, 44, 45, 46, 47, 42])
+        draw_facial_feature([48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 48])
+
+
+
         image_points = np.array([
             (shape.part(30).x, shape.part(30).y),  # Nose tip
             (shape.part(8).x, shape.part(8).y),  # Chin
@@ -204,6 +221,9 @@ while 1:
         resized_image1 = np.zeros((20, 10, 3), dtype=np.uint8)
         resized_image2 = np.zeros((20, 10, 3), dtype=np.uint8)
 
+        if masked_image1 is None or masked_image2 is None:
+            continue
+
         if resized_image1.shape[0] * resized_image1.shape[1] * resized_image2.shape[0] * resized_image2.shape[1] <= 0:
             continue
 
@@ -238,10 +258,18 @@ while 1:
         c = classifier(data)
 
         if c < 0:
-            cv2.rectangle(img, (5, 5), (100, 100), (0, 0, 255), 5)
+            h = img.shape[0]
+            w = img.shape[1]
+            cv2.rectangle(img, (10, 10), (w - 10, h - 10), (0, 0, 255), 20)
         print(c)
 
-    cv2.imshow('img', img)
+    h = img.shape[0] // 2
+    w = img.shape[1] // 2
+
+    small_img = cv2.resize(img, (w, h))
+
+    cv2.imshow('small_img', small_img)
+    cv2.imshow('img', orig_img)
     k = cv2.waitKey(30) & 0xff
     if k == 27:
         break
