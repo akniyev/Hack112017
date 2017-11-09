@@ -209,7 +209,7 @@ while 1:
             cv2.imwrite('data/'+time+'.jpg', orig_img)
             np.savetxt('data/'+time+'_eye1.txt', resized_image1, '%d')
             #cv2.imwrite('data/eye2_' + time + '.jpg', right_eye_img)
-            np.savetxt('data/' + time + '_eye2.txt', resized_image1, '%d')
+            np.savetxt('data/' + time + '_eye2.txt', resized_image2, '%d')
             np.savetxt('data/' + time + '_nose.txt', [p2[0]-p1[0], p2[1]-p1[1]], '%d')
 
         #gray_eye1 = cv2.cvtColor(masked_image1, cv2.COLOR_BGR2GRAY)
