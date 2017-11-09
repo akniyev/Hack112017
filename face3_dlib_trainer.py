@@ -39,8 +39,26 @@ from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.structure.modules import SoftmaxLayer
 
 def trainNet(x, y, c):
-    #svm = dlib.svm_c_trainer_histogram_intersection()
-    svm = dlib.
+    HIDDEN_NEURONS = 100
+    WEIGHTDECAY = c
+    MOMENTUM = 0.1
+
+    fnn = buildNetwork(402, HIDDEN_NEURONS, 1,
+                       outclass=SoftmaxLayer)
+
+    ds = ClassificationDataSet(402, 1, nb_classes=2)
+    for xi, yi in zip(x, y):
+        ds.addSample(tuple(xi), yi)
+
+
+    trainer = BackpropTrainer(fnn, dataset=ds, momentum=MOMENTUM,
+                              verbose=True, weightdecay=WEIGHTDECAY)
+
+    # for i in range(100):
+    #     print(trainer.train())
+    #trainer.trainUntilConvergence()
+    #return fnn
+    svm = dlib.svm_c_trainer_histogram_intersection()
     svm.set_c(c)
     return svm.train(x, y)
 
@@ -102,10 +120,10 @@ if __name__ == '__main__':
 
     classifier = svm.train(xtrain, ytrain)
 
-    hits = 0
-    for c in [2**i for i in range(-2, 14)]:
-        h = trainNet(xtrain, ytrain, c)
-        print("c=%10.2f; Train acc=%10.2f; Cross acc=%10.2f" % (c, accuracy(h, xtrain, ytrain), accuracy(h, xcross, ycross)))
+    #hits = 0
+    #for c in [2**i for i in range(-2, 14)]:
+        #fnn = trainNet(xtrain, ytrain, c)
+        # print("c=%10.2f; Train acc=%10.2f; Cross acc=%10.2f" % (c, accuracy(lambda x: fnn.activate(x), xtrain, ytrain), accuracy(lambda x: fnn.activate(x), xcross, ycross)))
         # print("Cross: c=%i, acc=%5.2f" % (c, accuracy(h, xcross, ycross)))
 
 
@@ -114,6 +132,7 @@ if __name__ == '__main__':
     print(classifier(example))
 
     # classifier models can also be pickled in the same was as any other python object.
+    classifier = trainNet(x, y, 10)
     with open('saved_model.pickle', 'wb') as handle:
         pickle.dump(classifier, handle)
 

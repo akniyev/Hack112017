@@ -42,7 +42,7 @@ def size_that_fits(w, h, dw, dh):
     else:
         return (int(w * ratio2), int(h * ratio2))
 
-generate_dataset = True
+generate_dataset = False
 counter = 0
 while 1:
     ret, img = cap.read()
@@ -203,6 +203,9 @@ while 1:
         # nw1, nh1 = size_that_fits(left_eye_img.shape[1], left_eye_img.shape[0], 40, 20)
         resized_image1 = np.zeros((20, 10, 3), dtype=np.uint8)
         resized_image2 = np.zeros((20, 10, 3), dtype=np.uint8)
+
+        if resized_image1.shape[0] * resized_image1.shape[1] * resized_image2.shape[0] * resized_image2.shape[1] <= 0:
+            continue
 
         resized_image1 = cv2.cvtColor(cv2.resize(masked_image1, (20, 10)), cv2.COLOR_BGR2GRAY)
         resized_image2 = cv2.cvtColor(cv2.resize(masked_image2, (20, 10)), cv2.COLOR_BGR2GRAY)
